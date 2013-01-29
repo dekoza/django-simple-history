@@ -5,6 +5,20 @@ from django.contrib.auth.models import User
 from django.utils import importlib
 from manager import HistoryDescriptor
 
+from registration import FieldRegistry
+from django.contrib.auth.models import User
+
+# This is used to store the user id - else just None.
+class CurrentUserField(models.ForeignKey):
+    def __init__(self, **kwargs):
+        super(CurrentUserField, self).__init__(User, null=True, **kwargs)
+
+    def contribute_to_class(self, cls, name):
+        super(CurrentUserField, self).contribute_to_class(cls, name)
+        registry = FieldRegistry()
+        registry.add_field(cls, self)
+
+
 
 class HistoricalRecords(object):
     def contribute_to_class(self, cls, name):
@@ -125,6 +139,7 @@ class HistoricalRecords(object):
             'history_id': models.AutoField(primary_key=True),
             'history_date': models.DateTimeField(auto_now_add=True),
             'history_user': models.ForeignKey(User, null=True),
+            'changed_by': CurrentUserField(related_name=rel_nm),
             'history_type': models.CharField(max_length=1, choices=(
                 ('+', 'Created'),
                 ('~', 'Changed'),

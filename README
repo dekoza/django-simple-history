@@ -7,6 +7,12 @@ Download the tar.gz, extract it and run the following inside the directory:
 == Basic usage ==
 Using this package is _really_ simple; you just have to import HistoricalRecords and create an instance of it on every model you want to historically track.
 
+Append the following line you your MIDDLEWARE_CLASSES
+MIDDLEWARE_CLASSES = ( 
+  'simple_history.middleware.CurrentUserMiddleware', 
+  )
+
+
 On your models you need to include the following line at the top:
     from simple_history.models import HistoricalRecords
 
